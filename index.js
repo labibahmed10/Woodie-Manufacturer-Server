@@ -47,14 +47,22 @@ async function run() {
       res.send(result);
     });
 
+    // updating the quantity of tool
     app.put("/allTools/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const { avlQuan } = req.body;
-      // console.log(singleTool);
       const updateDoc = { $set: { avlQuan } };
       const options = { upsert: true };
       const result = await allToolsInfo.updateOne(filter, updateDoc, options);
+      res.send(result);
+    });
+
+    //getting data by email of a single user
+    app.get("/purchase", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await purchaseInfo.find(query).toArray();
       res.send(result);
     });
   } finally {
