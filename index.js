@@ -5,6 +5,7 @@ const port = process.env.PORT || 5000;
 
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { ObjectID } = require("bson");
+const { options } = require("nodemon/lib/config");
 
 require("dotenv").config();
 
@@ -46,9 +47,16 @@ async function run() {
       res.send(result);
     });
 
-
-    
-
+    app.put("/allTools/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const { avlQuan } = req.body;
+      // console.log(singleTool);
+      const updateDoc = { $set: { avlQuan } };
+      const options = { upsert: true };
+      const result = await allToolsInfo.updateOne(filter, updateDoc, options);
+      res.send(result);
+    });
   } finally {
     console.log("Connected to db");
   }
