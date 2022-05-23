@@ -26,6 +26,8 @@ async function run() {
     await client.connect();
     const allToolsInfo = client.db("manufacturerWebsite").collection("allTools");
     const purchaseInfo = client.db("manufacturerWebsite").collection("purchaseInfo");
+    const allReviewsByUser = client.db("manufacturerWebsite").collection("reviewCollection");
+
     // getting all tools here--
     app.get("/allTools", async (req, res) => {
       const result = await allToolsInfo.find({}).toArray();
@@ -43,15 +45,18 @@ async function run() {
     //users purchase information according to quantity
     app.post("/purchase", async (req, res) => {
       const userInfo = req.body;
+      // console.log(userInfo);
       const result = await purchaseInfo.insertOne(userInfo);
       res.send(result);
     });
 
     // updating the quantity of tool
     app.put("/allTools/:id", async (req, res) => {
-      const id = req.params.id;
+      const id = req.params;
+      // console.log(id);
       const filter = { _id: ObjectId(id) };
       const { avlQuan } = req.body;
+      console.log(avlQuan);
       const updateDoc = { $set: { avlQuan } };
       const options = { upsert: true };
       const result = await allToolsInfo.updateOne(filter, updateDoc, options);
@@ -65,6 +70,34 @@ async function run() {
       const result = await purchaseInfo.find(query).toArray();
       res.send(result);
     });
+
+    // canceling a order from my orders page
+    app.delete("/cancelOrder/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await purchaseInfo.deleteOne(query);
+      res.send(result);
+    });
+
+    //for payment purpose search by id from purchase collection
+    app.get("/purchase/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const filter = { _id: ObjectId(id) };
+      const result = await purchaseInfo.findOne(filter);
+      res.send(result);
+    });
+
+    //getting all the reviews of customer
+    app.get("/allReviews", async (req, res) => {
+      const result = await allReviewsByUser.find({}).toArray();
+      res.send(result);
+    });
+
+    // posting a review of a customer
+
+
+
   } finally {
     console.log("Connected to db");
   }
