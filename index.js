@@ -1,17 +1,16 @@
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5000;
 
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
-const { ObjectID } = require("bson");
-const { options } = require("nodemon/lib/config");
-
-require("dotenv").config();
+// json web token
+const jwt = require("jsonwebtoken");
 
 //middleware
 app.use(cors());
 app.use(express.json());
+require("dotenv").config();
 
 // mongodb
 const uri = `mongodb+srv://${process.env.MW_USER}:${process.env.MW_PASS}@cluster0.zqp7w.mongodb.net/?retryWrites=true&w=majority`;
@@ -27,6 +26,7 @@ async function run() {
     const allToolsInfo = client.db("manufacturerWebsite").collection("allTools");
     const purchaseInfo = client.db("manufacturerWebsite").collection("purchaseInfo");
     const allReviewsByUser = client.db("manufacturerWebsite").collection("reviewCollection");
+    const allRrandomUsers = client.db("manufacturerWebsite").collection("allRandomUsers");
 
     // getting all tools here--
     app.get("/allTools", async (req, res) => {
@@ -97,6 +97,21 @@ async function run() {
       const review = req.body;
       const result = await allReviewsByUser.insertOne(review);
       res.send(result);
+    });
+
+    // all users information from my profile to update + JWT token sending
+    app.put("/randomUsers", async (req, res) => {
+      const email = req.query;
+      const updatedUser = req.body;
+      const filter = email;
+      const updateDoc = { $set: updatedUser };
+      const options = { upsert: true };
+      const result = await allRrandomUsers.updateOne(filter, updateDoc, options);
+
+      // creating token for user
+      const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET);
+
+      res.send({ result, accessToken: token });
     });
   } finally {
     console.log("Connected to db");
