@@ -20,6 +20,25 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
+const verifyJToken = (req, res, next) => {
+  const accessToken = req.headers.authorization;
+
+  if (!accessToken) {
+    return res.status(401).send({ status: false, message: "Unauthorized Access" });
+  } else {
+    const token = accessToken.split(" ")[1];
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+      if (err) {
+        return res.status(403).send({ status: false, message: "Forbidden Access" });
+      } else {
+        req.decoded = decoded;
+        next();
+      }
+    });
+  }
+};
+
 async function run() {
   try {
     await client.connect();
@@ -100,7 +119,7 @@ async function run() {
     });
 
     // all users information from my profile to update + JWT token sending
-    app.put("/randomUsers", async (req, res) => {
+    app.put("/randomUsers", verifyJToken, async (req, res) => {
       const email = req.query;
       const updatedUser = req.body;
       const filter = email;
