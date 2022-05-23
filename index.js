@@ -45,7 +45,6 @@ async function run() {
     //users purchase information according to quantity
     app.post("/purchase", async (req, res) => {
       const userInfo = req.body;
-      // console.log(userInfo);
       const result = await purchaseInfo.insertOne(userInfo);
       res.send(result);
     });
@@ -82,7 +81,6 @@ async function run() {
     //for payment purpose search by id from purchase collection
     app.get("/purchase/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
       const filter = { _id: ObjectId(id) };
       const result = await purchaseInfo.findOne(filter);
       res.send(result);
@@ -95,9 +93,11 @@ async function run() {
     });
 
     // posting a review of a customer
-
-
-
+    app.post("/allReviews", async (req, res) => {
+      const review = req.body;
+      const result = await allReviewsByUser.insertOne(review);
+      res.send(result);
+    });
   } finally {
     console.log("Connected to db");
   }
