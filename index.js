@@ -53,6 +53,14 @@ async function run() {
       res.send(result);
     });
 
+    // posting new single tool here by admin
+    app.post("/allTools", async (req, res) => {
+      const toolInfo = req.body;
+      console.log(toolInfo);
+      const result = await allToolsInfo.insertOne(toolInfo);
+      res.send(result);
+    });
+
     // getting a single tool by id--
     app.get("/allTools/:id", async (req, res) => {
       const id = req.params.id;
@@ -129,7 +137,6 @@ async function run() {
 
       // creating token for user
       const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET);
-
       res.send({ result, accessToken: token });
     });
   } finally {
