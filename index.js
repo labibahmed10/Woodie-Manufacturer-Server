@@ -32,7 +32,7 @@ const verifyJToken = (req, res, next) => {
       if (err) {
         return res.status(403).send({ status: false, message: "Forbidden Access" });
       } else {
-        req.decoded = decoded;
+        req.decoded = decoded?.email;
         next();
       }
     });
@@ -54,7 +54,7 @@ async function run() {
     });
 
     // posting new single tool here by admin
-    app.post("/allTools", async (req, res) => {
+    app.post("/allTools", verifyJToken, async (req, res) => {
       const toolInfo = req.body;
       console.log(toolInfo);
       const result = await allToolsInfo.insertOne(toolInfo);
@@ -126,8 +126,8 @@ async function run() {
       res.send(result);
     });
 
-    // all users information from my profile to update + JWT token sending
-    app.put("/randomUsers", verifyJToken, async (req, res) => {
+    // all users information from my profile to update + JWT token sending ehile login,signup,socialsigin
+    app.put("/allRandomUsers", verifyJToken, async (req, res) => {
       const email = req.query;
       const updatedUser = req.body;
       const filter = email;
@@ -138,6 +138,21 @@ async function run() {
       // creating token for user
       const token = jwt.sign({ email }, process.env.ACCESS_TOKEN_SECRET);
       res.send({ result, accessToken: token });
+    });
+
+    // getting all the users at make admin page
+    app.get("/allRandomUsers", verifyJToken, async (req, res) => {
+      const result = await allRrandomUsers.find({}).toArray();
+      res.send(result);
+    });
+
+    // making admin here by querying the role
+    app.put("/allRandomUsers/admin", verifyJToken, async (req, res) => {
+      const email = req.query;
+      const filter = email;
+      const updateDoc = { $set: { role: "admin" } };
+      const result = await allRrandomUsers.updateOne(filter, updateDoc);
+      res.send(result);
     });
   } finally {
     console.log("Connected to db");
