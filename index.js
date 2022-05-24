@@ -86,13 +86,19 @@ async function run() {
     // updating the quantity of tool
     app.put("/allTools/:id", async (req, res) => {
       const id = req.params;
-
       const filter = { _id: ObjectId(id) };
       const { avlQuan } = req.body;
-
       const updateDoc = { $set: { avlQuan } };
       const options = { upsert: true };
       const result = await allToolsInfo.updateOne(filter, updateDoc, options);
+      res.send(result);
+    });
+
+    // deleting a single product from db as a admin
+    app.delete("/deleteTool/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await allToolsInfo.deleteOne(filter);
       res.send(result);
     });
 
