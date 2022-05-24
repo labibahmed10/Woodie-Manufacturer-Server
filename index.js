@@ -29,9 +29,11 @@ const verifyJToken = (req, res, next) => {
     const token = accessToken.split(" ")[1];
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+      // console.log(err);
       if (err) {
         return res.status(403).send({ status: false, message: "Forbidden Access" });
       } else {
+        // console.log(decoded);
         req.decoded = decoded?.email;
         next();
       }
@@ -47,6 +49,19 @@ async function run() {
     const allReviewsByUser = client.db("manufacturerWebsite").collection("reviewCollection");
     const allRrandomUsers = client.db("manufacturerWebsite").collection("allRandomUsers");
 
+    // verifying a user whether s/he is admin or not!!
+
+    const verifyAdmin = async (req, res, next) => {
+      const requesterEmail = req.decoded;
+      const requesterAccount = await allRrandomUsers.findOne(requesterEmail);
+
+      if (requesterAccount.role === "admin") {
+        next();
+      } else {
+        res.status(403).send({ status: false, message: "Forbidden Access" });
+      }
+    };
+
     // getting all tools here--
     app.get("/allTools", async (req, res) => {
       const result = await allToolsInfo.find({}).toArray();
@@ -56,7 +71,7 @@ async function run() {
     // posting new single tool here by admin
     app.post("/allTools", verifyJToken, async (req, res) => {
       const toolInfo = req.body;
-      console.log(toolInfo);
+
       const result = await allToolsInfo.insertOne(toolInfo);
       res.send(result);
     });
@@ -69,31 +84,48 @@ async function run() {
       res.send(result);
     });
 
-    //users purchase information according to quantity
-    app.post("/purchase", async (req, res) => {
-      const userInfo = req.body;
-      const result = await purchaseInfo.insertOne(userInfo);
-      res.send(result);
-    });
-
     // updating the quantity of tool
     app.put("/allTools/:id", async (req, res) => {
       const id = req.params;
-      // console.log(id);
+
       const filter = { _id: ObjectId(id) };
       const { avlQuan } = req.body;
-      console.log(avlQuan);
+
       const updateDoc = { $set: { avlQuan } };
       const options = { upsert: true };
       const result = await allToolsInfo.updateOne(filter, updateDoc, options);
       res.send(result);
     });
 
-    //getting data by email of a single user
+    //////////////////////////////////////
+
+    // getting all users purchase info--
     app.get("/purchase", async (req, res) => {
-      const email = req.query.email;
-      const query = { email: email };
+      const result = await purchaseInfo.find({}).toArray();
+      res.send(result);
+    });
+
+    //getting data by email of a single user
+    app.get("/purchaseByEmail", verifyJToken, async (req, res) => {
+      const email = req.query;
+      console.log(email);
+      const query = email;
       const result = await purchaseInfo.find(query).toArray();
+      res.send(result);
+    });
+
+    //for payment purpose search by id from purchase collection
+    app.get("/purchase/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const result = await purchaseInfo.findOne(filter);
+      res.send(result);
+    });
+
+    //users purchase information according to quantity
+    app.post("/purchase", async (req, res) => {
+      const userInfo = req.body;
+      const result = await purchaseInfo.insertOne(userInfo);
       res.send(result);
     });
 
@@ -105,13 +137,7 @@ async function run() {
       res.send(result);
     });
 
-    //for payment purpose search by id from purchase collection
-    app.get("/purchase/:id", async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
-      const result = await purchaseInfo.findOne(filter);
-      res.send(result);
-    });
+    ////////////////////////////////
 
     //getting all the reviews of customer
     app.get("/allReviews", async (req, res) => {
@@ -126,9 +152,12 @@ async function run() {
       res.send(result);
     });
 
+    /////////////////////////////////////
+
     // all users information from my profile to update + JWT token sending ehile login,signup,socialsigin
-    app.put("/allRandomUsers", verifyJToken, async (req, res) => {
+    app.put("/allRandomUsers", async (req, res) => {
       const email = req.query;
+
       const updatedUser = req.body;
       const filter = email;
       const updateDoc = { $set: updatedUser };
@@ -140,19 +169,36 @@ async function run() {
       res.send({ result, accessToken: token });
     });
 
-    // getting all the users at make admin page
-    app.get("/allRandomUsers", verifyJToken, async (req, res) => {
+    // getting all the users at make admin page and only admin will be able to this
+    app.get("/allRandomUsers", verifyJToken, verifyAdmin, async (req, res) => {
       const result = await allRrandomUsers.find({}).toArray();
       res.send(result);
     });
 
     // making admin here by querying the role
-    app.put("/allRandomUsers/admin", verifyJToken, async (req, res) => {
+    app.put("/allRandomUsers/admin", verifyJToken, verifyAdmin, async (req, res) => {
       const email = req.query;
+      console.log(email);
       const filter = email;
       const updateDoc = { $set: { role: "admin" } };
       const result = await allRrandomUsers.updateOne(filter, updateDoc);
       res.send(result);
+    });
+
+    // for useAdmin page checing if the user a admin or not?
+
+    app.get("/admin", verifyJToken, verifyAdmin, async (req, res) => {
+      const email = req.query;
+      console.log(email);
+      const requesterEmail = req.decoded.email;
+
+      if (email.email === requesterEmail) {
+        const requesterAccount = await allRrandomUsers.findOne(email);
+        const isAdmin = requesterAccount.role === "admin";
+        return res.send({ isAdmin });
+      } else {
+        return res.status(403).send({ status: false, message: "Forbidden Access" });
+      }
     });
   } finally {
     console.log("Connected to db");
