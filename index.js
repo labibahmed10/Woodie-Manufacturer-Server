@@ -71,7 +71,6 @@ async function run() {
     // posting new single tool here by admin
     app.post("/allTools", verifyJToken, async (req, res) => {
       const toolInfo = req.body;
-
       const result = await allToolsInfo.insertOne(toolInfo);
       res.send(result);
     });
@@ -126,6 +125,16 @@ async function run() {
     app.post("/purchase", async (req, res) => {
       const userInfo = req.body;
       const result = await purchaseInfo.insertOne(userInfo);
+      res.send(result);
+    });
+
+    app.put("/updateStatus/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const filter = { _id: ObjectId(id) };
+      const updateDoc = { $set: { status: true } };
+      const options = { upsert: true };
+      const result = await purchaseInfo.updateOne(filter, updateDoc, options);
       res.send(result);
     });
 
