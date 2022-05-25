@@ -4,13 +4,18 @@ const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 5000;
 
+// dot env
+require("dotenv").config();
+
+// This is your test secret API key.
+const stripe = require("stripe")(process.env.SECRET_API_STRIPE);
+
 // json web token
 const jwt = require("jsonwebtoken");
 
 //middleware
 app.use(cors());
 app.use(express.json());
-require("dotenv").config();
 
 // mongodb
 const uri = `mongodb+srv://${process.env.MW_USER}:${process.env.MW_PASS}@cluster0.zqp7w.mongodb.net/?retryWrites=true&w=majority`;
@@ -22,7 +27,7 @@ const client = new MongoClient(uri, {
 
 const verifyJToken = (req, res, next) => {
   const accessToken = req.headers.authorization;
-
+  // console.log(accessToken);
   if (!accessToken) {
     return res.status(401).send({ status: false, message: "Unauthorized Access" });
   } else {
@@ -61,6 +66,20 @@ async function run() {
         res.status(403).send({ status: false, message: "Forbidden Access" });
       }
     };
+
+    // stripe payement gateway post api
+    app.post("/create-payment-intent", verifyJToken, async (req, res) => {
+      const { price } = req.body;
+      const amount = price * 100;
+      if (amount) {
+        const paymentIntent = await stripe.paymentIntents.create({
+          amount: amount,
+          currency: "usd",
+          payment_method_types: ["card"],
+        });
+        res.send({ clientSecret: paymentIntent.client_secret });
+      }
+    });
 
     // getting all tools here--
     app.get("/allTools", async (req, res) => {
@@ -116,6 +135,18 @@ async function run() {
       console.log(email);
       const query = email;
       const result = await purchaseInfo.find(query).toArray();
+      res.send(result);
+    });
+
+    // updating paid or unpaid from checkoutPage
+
+    app.patch("/purchasePaid/:id", async (req, res) => {
+      const id = req.params.id;
+      const { transictionID, paymentID } = req.body;
+      const filter = { _id: ObjectId(id) };
+      const updateDoc = { $set: { paid: true, transictionID, paymentID } };
+      // might add payment collection here later
+      const result = await purchaseInfo.updateOne(filter, updateDoc);
       res.send(result);
     });
 
