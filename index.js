@@ -84,7 +84,7 @@ async function run() {
     // getting all tools here--
     app.get("/allTools", async (req, res) => {
       const result = await allToolsInfo.find({}).toArray();
-      res.send(result);
+      res.send(result.reverse());
     });
 
     // posting new single tool here by admin
@@ -142,9 +142,9 @@ async function run() {
 
     app.patch("/purchasePaid/:id", async (req, res) => {
       const id = req.params.id;
-      const { transictionID, paymentID } = req.body;
+      const { transictionID, paymentID, status } = req.body;
       const filter = { _id: ObjectId(id) };
-      const updateDoc = { $set: { paid: true, transictionID, paymentID } };
+      const updateDoc = { $set: { paid: true, transictionID, paymentID, status } };
       // might add payment collection here later
       const result = await purchaseInfo.updateOne(filter, updateDoc);
       res.send(result);
@@ -165,13 +165,12 @@ async function run() {
       res.send(result);
     });
 
-    app.put("/updateStatus/:id", async (req, res) => {
+    app.patch("/updateStatus/:id", async (req, res) => {
       const id = req.params.id;
-      console.log(id);
+      const { status } = req.body;
       const filter = { _id: ObjectId(id) };
-      const updateDoc = { $set: { status: true } };
-      const options = { upsert: true };
-      const result = await purchaseInfo.updateOne(filter, updateDoc, options);
+      const updateDoc = { $set: { status: status } };
+      const result = await purchaseInfo.updateOne(filter, updateDoc);
       res.send(result);
     });
 
@@ -188,7 +187,7 @@ async function run() {
     //getting all the reviews of customer
     app.get("/allReviews", async (req, res) => {
       const result = await allReviewsByUser.find({}).toArray();
-      res.send(result);
+      res.send(result.reverse());
     });
 
     // posting a review of a customer
