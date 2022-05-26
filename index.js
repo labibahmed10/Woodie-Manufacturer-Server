@@ -34,11 +34,9 @@ const verifyJToken = (req, res, next) => {
     const token = accessToken.split(" ")[1];
 
     jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
-      // console.log(err);
       if (err) {
         return res.status(403).send({ status: false, message: "Forbidden Access" });
       } else {
-        // console.log(decoded);
         req.decoded = decoded?.email;
         next();
       }
@@ -55,7 +53,6 @@ async function run() {
     const allRrandomUsers = client.db("manufacturerWebsite").collection("allRandomUsers");
 
     // verifying a user whether s/he is admin or not!!
-
     const verifyAdmin = async (req, res, next) => {
       const requesterEmail = req.decoded;
       const requesterAccount = await allRrandomUsers.findOne(requesterEmail);
@@ -87,14 +84,14 @@ async function run() {
       res.send(result.reverse());
     });
 
-    // posting new single tool here by admin
-    app.post("/allTools", verifyJToken, async (req, res) => {
+    // posting new single tool here by admin from add a tool
+    app.post("/allTools", verifyJToken, verifyAdmin, async (req, res) => {
       const toolInfo = req.body;
       const result = await allToolsInfo.insertOne(toolInfo);
       res.send(result);
     });
 
-    // getting a single tool by id--
+    // getting a single tool by id fo buying--
     app.get("/allTools/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
@@ -102,7 +99,7 @@ async function run() {
       res.send(result);
     });
 
-    // updating the quantity of tool
+    // updating the quantity of tool when a user is purchasing
     app.put("/allTools/:id", async (req, res) => {
       const id = req.params;
       const filter = { _id: ObjectId(id) };
@@ -114,7 +111,7 @@ async function run() {
     });
 
     // deleting a single product from db as a admin
-    app.delete("/deleteTool/:id", async (req, res) => {
+    app.delete("/deleteTool/:id", verifyJToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const result = await allToolsInfo.deleteOne(filter);
@@ -124,7 +121,7 @@ async function run() {
     //////////////////////////////////////
 
     // getting all users purchase info--
-    app.get("/purchase", async (req, res) => {
+    app.get("/purchase", verifyJToken, verifyAdmin, async (req, res) => {
       const result = await purchaseInfo.find({}).toArray();
       res.send(result);
     });
@@ -132,15 +129,13 @@ async function run() {
     //getting data by email of a single user
     app.get("/purchaseByEmail", verifyJToken, async (req, res) => {
       const email = req.query;
-      console.log(email);
       const query = email;
       const result = await purchaseInfo.find(query).toArray();
       res.send(result);
     });
 
-    // updating paid or unpaid from checkoutPage
-
-    app.patch("/purchasePaid/:id", async (req, res) => {
+    // updating paid or unpaid from checkoutPage by a user
+    app.patch("/purchasePaid/:id", verifyJToken, async (req, res) => {
       const id = req.params.id;
       const { transictionID, paymentID, status } = req.body;
       const filter = { _id: ObjectId(id) };
@@ -151,21 +146,22 @@ async function run() {
     });
 
     //for payment purpose search by id from purchase collection
-    app.get("/purchase/:id", async (req, res) => {
+    app.get("/purchase/:id", verifyJToken, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const result = await purchaseInfo.findOne(filter);
       res.send(result);
     });
 
-    //users purchase information according to quantity
-    app.post("/purchase", async (req, res) => {
+    //users purchase information according to quantity from purchase page
+    app.post("/purchase", verifyJToken, async (req, res) => {
       const userInfo = req.body;
       const result = await purchaseInfo.insertOne(userInfo);
       res.send(result);
     });
 
-    app.patch("/updateStatus/:id", async (req, res) => {
+    // updating status by admin to shipped
+    app.patch("/updateStatus/:id", verifyJToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const { status } = req.body;
       const filter = { _id: ObjectId(id) };
@@ -175,8 +171,9 @@ async function run() {
     });
 
     // canceling a order from my orders page
-    app.delete("/cancelOrder/:id", async (req, res) => {
+    app.delete("/cancelOrder/:id", verifyJToken, async (req, res) => {
       const id = req.params.id;
+      console.log(id);
       const query = { _id: ObjectId(id) };
       const result = await purchaseInfo.deleteOne(query);
       res.send(result);
@@ -191,7 +188,7 @@ async function run() {
     });
 
     // posting a review of a customer
-    app.post("/allReviews", async (req, res) => {
+    app.post("/allReviews", verifyJToken, async (req, res) => {
       const review = req.body;
       const result = await allReviewsByUser.insertOne(review);
       res.send(result);
@@ -199,10 +196,9 @@ async function run() {
 
     /////////////////////////////////////
 
-    // all users information from my profile to update + JWT token sending ehile login,signup,socialsigin
+    // all users information from my profile to update + JWT token sending while login,signup,socialsigin
     app.put("/allRandomUsers", async (req, res) => {
       const email = req.query;
-
       const updatedUser = req.body;
       const filter = email;
       const updateDoc = { $set: updatedUser };
@@ -223,7 +219,6 @@ async function run() {
     // making admin here by querying the role
     app.put("/allRandomUsers/admin", verifyJToken, verifyAdmin, async (req, res) => {
       const email = req.query;
-      console.log(email);
       const filter = email;
       const updateDoc = { $set: { role: "admin" } };
       const result = await allRrandomUsers.updateOne(filter, updateDoc);
@@ -231,12 +226,9 @@ async function run() {
     });
 
     // for useAdmin page checing if the user a admin or not?
-
     app.get("/admin", verifyJToken, verifyAdmin, async (req, res) => {
       const email = req.query;
-      console.log(email);
       const requesterEmail = req.decoded.email;
-
       if (email.email === requesterEmail) {
         const requesterAccount = await allRrandomUsers.findOne(email);
         const isAdmin = requesterAccount.role === "admin";
