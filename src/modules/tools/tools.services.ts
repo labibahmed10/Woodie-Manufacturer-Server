@@ -3,7 +3,6 @@ import { ToolsModel } from "./tools.model";
 
 const getAllToolsFromDB = async () => {
   const result = await ToolsModel.find({});
-  console.log(result);
   return result;
 };
 
