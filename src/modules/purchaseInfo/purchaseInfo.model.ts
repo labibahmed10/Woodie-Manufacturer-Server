@@ -60,4 +60,4 @@ const PurchaseSchmea = new Schema<IPurchaseInfo>(
   }
 );
 
-export const PurchaseInfoModel = model<IPurchaseInfo>("purchaseInfo", PurchaseSchmea);
+export const PurchaseInfoModel = model<IPurchaseInfo>("purchaseinfo", PurchaseSchmea);
