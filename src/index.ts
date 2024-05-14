@@ -1,4 +1,6 @@
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
+
+// const { MongoClient, ServerApiVersion, new ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -94,7 +96,7 @@ async function run() {
     // getting a single tool by id fo buying--
     app.get("/allTools/:id", async (req, res) => {
       const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
+      const filter = { _id: new ObjectId(id) };
       const result = await allToolsInfo.findOne(filter);
       res.send(result);
     });
@@ -102,7 +104,7 @@ async function run() {
     // updating the quantity of tool when a user is purchasing
     app.put("/allTools/:id", async (req, res) => {
       const id = req.params;
-      const filter = { _id: ObjectId(id) };
+      const filter = { _id: new ObjectId(id) };
       const { avlQuan } = req.body;
       const updateDoc = { $set: { avlQuan } };
       const options = { upsert: true };
@@ -113,7 +115,7 @@ async function run() {
     // deleting a single product from db as a admin
     app.delete("/deleteTool/:id", verifyJToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
+      const filter = { _id: new ObjectId(id) };
       const result = await allToolsInfo.deleteOne(filter);
       res.send(result);
     });
@@ -138,7 +140,7 @@ async function run() {
     app.patch("/purchasePaid/:id", verifyJToken, async (req, res) => {
       const id = req.params.id;
       const { transictionID, paymentID, status } = req.body;
-      const filter = { _id: ObjectId(id) };
+      const filter = { _id: new ObjectId(id) };
       const updateDoc = { $set: { paid: true, transictionID, paymentID, status } };
       // might add payment collection here later
       const result = await purchaseInfo.updateOne(filter, updateDoc);
@@ -148,7 +150,7 @@ async function run() {
     //for payment purpose search by id from purchase collection
     app.get("/purchase/:id", verifyJToken, async (req, res) => {
       const id = req.params.id;
-      const filter = { _id: ObjectId(id) };
+      const filter = { _id: new ObjectId(id) };
       const result = await purchaseInfo.findOne(filter);
       res.send(result);
     });
@@ -164,7 +166,7 @@ async function run() {
     app.patch("/updateStatus/:id", verifyJToken, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const { status } = req.body;
-      const filter = { _id: ObjectId(id) };
+      const filter = { _id: new ObjectId(id) };
       const updateDoc = { $set: { status: status } };
       const result = await purchaseInfo.updateOne(filter, updateDoc);
       res.send(result);
@@ -174,7 +176,7 @@ async function run() {
     app.delete("/cancelOrder/:id", verifyJToken, async (req, res) => {
       const id = req.params.id;
       console.log(id);
-      const query = { _id: ObjectId(id) };
+      const query = { _id: new ObjectId(id) };
       const result = await purchaseInfo.deleteOne(query);
       res.send(result);
     });
