@@ -17,9 +17,18 @@ const getSingleToolsFromDB = async (id: string) => {
   return result;
 };
 
+const updateSingleToolIntoDB = async (id: string, data: IAllTools) => {
+  const result = await ToolsModel.updateOne({ _id: id }, data, {
+    runValidators: true,
+  });
+
+  return result;
+};
+
 const ToolServices = {
   getAllToolsFromDB,
   createToolIntoDB,
   getSingleToolsFromDB,
+  updateSingleToolIntoDB,
 };
 export default ToolServices;

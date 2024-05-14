@@ -24,10 +24,23 @@ const getSingleTools = catchAsyncFunc(async (req, res) => {
     data: result,
   });
 });
+
+const updateSingleTool = catchAsyncFunc(async (req, res) => {
+  const { id } = req.params;
+  const data = req.body;
+
+  const result = await ToolServices.updateSingleToolIntoDB(id, data);
+
+  return res.status(200).json({
+    result,
+  });
+});
+
 const ToolsController = {
   getAllTools,
   getSingleTools,
   createTool,
+  updateSingleTool,
 };
 
 export default ToolsController;
