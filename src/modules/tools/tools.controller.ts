@@ -16,8 +16,17 @@ const createTool = catchAsyncFunc(async (req, res) => {
   });
 });
 
+const getSingleTools = catchAsyncFunc(async (req, res) => {
+  const { id } = req.params;
+  const result = await ToolServices.getSingleToolsFromDB(id);
+
+  return res.status(200).json({
+    data: result,
+  });
+});
 const ToolsController = {
   getAllTools,
+  getSingleTools,
   createTool,
 };
 

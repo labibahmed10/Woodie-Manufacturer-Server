@@ -12,8 +12,14 @@ const createToolIntoDB = async (data: IAllTools) => {
   return result;
 };
 
+const getSingleToolsFromDB = async (id: string) => {
+  const result = await ToolsModel.findById(id);
+  return result;
+};
+
 const ToolServices = {
   getAllToolsFromDB,
   createToolIntoDB,
+  getSingleToolsFromDB,
 };
 export default ToolServices;
