@@ -25,10 +25,16 @@ const updateSingleToolIntoDB = async (id: string, data: IAllTools) => {
   return result;
 };
 
+const deleteToolFromDB = async (id: string) => {
+  const result = await ToolsModel.deleteOne({ _id: id });
+  return result;
+};
+
 const ToolServices = {
   getAllToolsFromDB,
   createToolIntoDB,
   getSingleToolsFromDB,
   updateSingleToolIntoDB,
+  deleteToolFromDB,
 };
 export default ToolServices;

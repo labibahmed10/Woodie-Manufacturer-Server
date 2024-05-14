@@ -36,11 +36,21 @@ const updateSingleTool = catchAsyncFunc(async (req, res) => {
   });
 });
 
+const deleteTool = catchAsyncFunc(async (req, res) => {
+  const { id } = req.params;
+  const result = await ToolServices.deleteToolFromDB(id);
+
+  return res.status(200).json({
+    result,
+  });
+});
+
 const ToolsController = {
   getAllTools,
   getSingleTools,
   createTool,
   updateSingleTool,
+  deleteTool,
 };
 
 export default ToolsController;
