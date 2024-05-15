@@ -1,3 +1,6 @@
+import httpStatus from "http-status";
+import { AppError } from "../../error/AppError";
+import { role } from "../../middlewares/authMiddleware";
 import { IAllUsers } from "./users.interface";
 import { AllUsersModel } from "./users.model";
 
@@ -34,9 +37,20 @@ const updateUserInfoIntDB = async (email: string, data: Partial<IAllUsers>) => {
   return result;
 };
 
+const checkIfAdminFromDB = async (email: string, reqEmail: string) => {
+  if (email === reqEmail) {
+    const adminAccount = await AllUsersModel.findOne({ email });
+    const isAdmin = adminAccount!.role === role.admin;
+    return isAdmin;
+  } else {
+    throw new AppError(httpStatus.FORBIDDEN, "Forbidden Access");
+  }
+};
+
 const AllUsersServices = {
   getAllUsersFromDB,
   createANewAdminInDB,
   updateUserInfoIntDB,
+  checkIfAdminFromDB,
 };
 export default AllUsersServices;

@@ -1,5 +1,9 @@
+import Stripe from "stripe";
+import config from "../../app/config";
 import catchAsyncFunc from "../../utils/catchAsyncFunc";
 import PurchaseInfoServices from "./purchaseInfo.services";
+
+const stripe: Stripe = require("stripe")(config.stripeKey);
 
 const getAllPurchaseInfo = catchAsyncFunc(async (req, res) => {
   const result = await PurchaseInfoServices.getAllPurchaseInfoFromDB();
@@ -69,6 +73,24 @@ const cancelAOrderFromPurchase = catchAsyncFunc(async (req, res) => {
   });
 });
 
+const stripePaymentGateway = catchAsyncFunc(async (req, res) => {
+  const { price } = req.body;
+  const amount = price * 100;
+
+  if (amount) {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount,
+      currency: "usd",
+      payment_method_types: ["card"],
+    });
+
+    return res.status(200).json({
+      status: "success",
+      clientSecret: paymentIntent.client_secret,
+    });
+  }
+});
+
 const PurchaseInfoController = {
   getAllPurchaseInfo,
   getPurchasedByEmail,
@@ -77,6 +99,7 @@ const PurchaseInfoController = {
   getPurchaseInfoByID,
   updateProductStatus,
   cancelAOrderFromPurchase,
+  stripePaymentGateway,
 };
 
 export default PurchaseInfoController;

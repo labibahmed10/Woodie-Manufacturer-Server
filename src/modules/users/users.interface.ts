@@ -1,3 +1,5 @@
+import { Model } from "mongoose";
+
 export interface IAllUsers {
   name: string;
   email: string;
@@ -6,4 +8,8 @@ export interface IAllUsers {
   location?: string;
   phone?: string;
   profile?: string;
+}
+
+export interface UserStaticMethods extends Model<IAllUsers> {
+  isUserExistByEmail: (email: string) => Promise<IAllUsers>;
 }

@@ -1,7 +1,7 @@
 import { model, Schema } from "mongoose";
-import { IAllUsers } from "./users.interface";
+import { IAllUsers, UserStaticMethods } from "./users.interface";
 
-const AllUsersSchema = new Schema<IAllUsers>(
+const AllUsersSchema = new Schema<IAllUsers, UserStaticMethods>(
   {
     name: {
       type: String,
@@ -45,4 +45,8 @@ const AllUsersSchema = new Schema<IAllUsers>(
   }
 );
 
-export const AllUsersModel = model<IAllUsers>("users", AllUsersSchema, "users");
+AllUsersSchema.statics.isUserExistByEmail = async function (email: string) {
+  return await AllUsersModel.findOne({ email: email });
+};
+
+export const AllUsersModel = model<IAllUsers, UserStaticMethods>("users", AllUsersSchema, "users");

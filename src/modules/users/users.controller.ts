@@ -28,10 +28,21 @@ const updateUserInfo = catchAsyncFunc(async (req, res) => {
   });
 });
 
+const checkIfAdmin = catchAsyncFunc(async (req, res) => {
+  const { email } = req.query;
+  const requestedEmail = req.user?.email;
+  const result = await AllUsersServices.checkIfAdminFromDB(email as any, requestedEmail);
+
+  return res.status(200).json({
+    result,
+  });
+});
+
 const AllUsersController = {
   getAllRandomUsers,
   createANewAdmin,
   updateUserInfo,
+  checkIfAdmin,
 };
 
 export default AllUsersController;
