@@ -52,6 +52,12 @@ const updateProductStatusIntoDB = async (id: string, status: string) => {
   return result;
 };
 
+const cancelOrderFromPurchaseFromDB = async (id: string) => {
+  const result = await PurchaseInfoModel.deleteOne({ _id: id });
+
+  return result;
+};
+
 const PurchaseInfoServices = {
   getAllPurchaseInfoFromDB,
   getPurchasedByEmailFromDB,
@@ -59,5 +65,6 @@ const PurchaseInfoServices = {
   addNewPurchaseInDB,
   getPurchaseInfoByIDFromDB,
   updateProductStatusIntoDB,
+  cancelOrderFromPurchaseFromDB,
 };
 export default PurchaseInfoServices;

@@ -59,6 +59,16 @@ const updateProductStatus = catchAsyncFunc(async (req, res) => {
   });
 });
 
+const cancelAOrderFromPurchase = catchAsyncFunc(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await PurchaseInfoServices.cancelOrderFromPurchaseFromDB(id);
+
+  return res.status(200).json({
+    result,
+  });
+});
+
 const PurchaseInfoController = {
   getAllPurchaseInfo,
   getPurchasedByEmail,
@@ -66,6 +76,7 @@ const PurchaseInfoController = {
   addNewPurchaseInfoOfUser,
   getPurchaseInfoByID,
   updateProductStatus,
+  cancelAOrderFromPurchase,
 };
 
 export default PurchaseInfoController;
