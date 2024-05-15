@@ -1,6 +1,7 @@
 import { Router } from "express";
 import toolsRoutes from "../modules/tools/tools.routes";
 import purchaseInfoRoutes from "../modules/purchaseInfo/purchaseInfo.routes";
+import reviewsRoutes from "../modules/reviews/reviews.routes";
 const allRoutes = Router();
 
 const routes = [
@@ -11,6 +12,10 @@ const routes = [
   {
     path: "/",
     route: purchaseInfoRoutes,
+  },
+  {
+    path: "/",
+    route: reviewsRoutes,
   },
 ];
 routes.forEach((route) => allRoutes.use(route.path, route.route));

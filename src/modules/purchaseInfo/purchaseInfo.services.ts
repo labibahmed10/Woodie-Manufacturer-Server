@@ -1,4 +1,3 @@
-import { IPurchaseInfo } from "./purchaseInfo.interface";
 import { PurchaseInfoModel } from "./purchaseInfo.model";
 
 const getAllPurchaseInfoFromDB = async () => {
@@ -20,8 +19,6 @@ const getPurchasedByEmailFromDB = async (email: string) => {
 };
 
 const updatePaymentStatusIntoDB = async (id: string, transictionID: string, paymentID: string, status: string) => {
-  const value = await PurchaseInfoModel.findOne({ _id: id });
-  console.log(value);
   const result = await PurchaseInfoModel.updateOne(
     { _id: id },
     {
