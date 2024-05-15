@@ -3,7 +3,7 @@ import ToolsController from "./tools.controller";
 import authMiddleware, { role } from "../../middlewares/authMiddleware";
 const toolsRoutes = Router();
 
-toolsRoutes.get("/allTools", ToolsController.getAllTools);
+toolsRoutes.get("/all-tools", ToolsController.getAllTools);
 toolsRoutes.post("/create", authMiddleware(role.admin), ToolsController.createTool);
 
 toolsRoutes.get("/allTools/:id", ToolsController.getSingleTools);

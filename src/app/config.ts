@@ -8,6 +8,7 @@ export default {
   port: process.env.PORT,
   databaseUrl: process.env.DATABASE_URL,
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   stripeKey: process.env.SECRET_API_STRIPE,
 };
 

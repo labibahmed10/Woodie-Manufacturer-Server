@@ -1,5 +1,7 @@
+import config from "../../app/config";
 import catchAsyncFunc from "../../utils/catchAsyncFunc";
 import AllUsersServices from "./users.services";
+import jwt from "jsonwebtoken";
 
 const getAllRandomUsers = catchAsyncFunc(async (req, res) => {
   const result = await AllUsersServices.getAllUsersFromDB();
@@ -21,17 +23,22 @@ const createANewAdmin = catchAsyncFunc(async (req, res) => {
 const updateUserInfo = catchAsyncFunc(async (req, res) => {
   const { email } = req.query;
   const data = req.body;
+
   const result = await AllUsersServices.updateUserInfoIntDB(email as any, data);
+
+  const token = jwt.sign({ email }, config.accessTokenSecret as string);
 
   return res.status(200).json({
     result,
+    accessToken: token,
   });
 });
 
 const checkIfAdmin = catchAsyncFunc(async (req, res) => {
   const { email } = req.query;
-  const requestedEmail = req.user?.email;
-  const result = await AllUsersServices.checkIfAdminFromDB(email as any, requestedEmail);
+  const requestedEmail = req.user;
+  console.log("requestedEmail: " + requestedEmail);
+  const result = await AllUsersServices.checkIfAdminFromDB(email as any, requestedEmail as any);
 
   return res.status(200).json({
     result,

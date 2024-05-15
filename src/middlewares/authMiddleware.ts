@@ -14,14 +14,15 @@ type UserRole = keyof typeof role;
 
 const authMiddleware = (role: UserRole) => {
   return catchAsyncFunc(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization;
-
+    const token = req.headers.authorization?.split(" ")[1];
+    console.log("token", token);
     if (!token) {
       throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized to access this");
     }
 
-    const decoded = jwt.verify(token, config.jwtAccessSecret as string) as JwtPayload;
+    const decoded = jwt.verify(token, config.accessTokenSecret as string) as JwtPayload;
     console.log(decoded);
+
     if (!decoded) {
       throw new AppError(httpStatus.FORBIDDEN, "Forbidden Access");
     }

@@ -49,4 +49,4 @@ AllUsersSchema.statics.isUserExistByEmail = async function (email: string) {
   return await AllUsersModel.findOne({ email: email });
 };
 
-export const AllUsersModel = model<IAllUsers, UserStaticMethods>("users", AllUsersSchema, "users");
+export const AllUsersModel = model<IAllUsers, UserStaticMethods>("allrandomusers", AllUsersSchema, "allrandomusers");

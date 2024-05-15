@@ -1,11 +1,11 @@
 import { Router } from "express";
 import AllUsersController from "./users.controller";
 import authMiddleware, { role } from "../../middlewares/authMiddleware";
-const allUsers = Router();
+const allUsersRoutes = Router();
 
-allUsers.get("/all-users", authMiddleware(role.admin), AllUsersController.getAllRandomUsers);
-allUsers.get("/admin", authMiddleware(role.admin), AllUsersController.checkIfAdmin);
-allUsers.patch("/make-admin", authMiddleware(role.admin), AllUsersController.createANewAdmin);
-allUsers.put("/user-info", authMiddleware, AllUsersController.updateUserInfo);
+allUsersRoutes.get("/all-users", authMiddleware(role.admin), AllUsersController.getAllRandomUsers);
+allUsersRoutes.get("/admin", authMiddleware(role.admin), AllUsersController.checkIfAdmin);
+allUsersRoutes.patch("/make-admin", authMiddleware(role.admin), AllUsersController.createANewAdmin);
+allUsersRoutes.put("/user-info", AllUsersController.updateUserInfo);
 
-export default allUsers;
+export default allUsersRoutes;

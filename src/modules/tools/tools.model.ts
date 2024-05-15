@@ -36,4 +36,4 @@ const ToolsSchema = new Schema<IAllTools>(
   }
 );
 
-export const ToolsModel = model<IAllTools>("alltools", ToolsSchema);
+export const ToolsModel = model<IAllTools>("alltools", ToolsSchema, "alltools");

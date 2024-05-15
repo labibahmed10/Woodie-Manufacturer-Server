@@ -4,7 +4,8 @@ import authMiddleware, { role } from "../../middlewares/authMiddleware";
 const purchaseInfoRoutes = Router();
 
 purchaseInfoRoutes.get("/purchase-info", authMiddleware(role.admin), PurchaseInfoController.getAllPurchaseInfo);
-purchaseInfoRoutes.get("/purchased-by-email", authMiddleware, PurchaseInfoController.getPurchasedByEmail);
+
+purchaseInfoRoutes.get("/purchase-by-email", PurchaseInfoController.getPurchasedByEmail);
 
 purchaseInfoRoutes.post("/purchase-info", authMiddleware, PurchaseInfoController.addNewPurchaseInfoOfUser);
 purchaseInfoRoutes.post("/create-payment-intent", authMiddleware, PurchaseInfoController.stripePaymentGateway);
