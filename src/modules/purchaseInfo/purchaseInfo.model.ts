@@ -8,7 +8,7 @@ const PurchaseSchmea = new Schema<IPurchaseInfo>(
       trim: true,
       required: [true, "Purchased person name is required"],
     },
-    toolname: {
+    toolName: {
       type: String,
       trim: true,
       required: [true, "Tools name is required"],
@@ -57,7 +57,8 @@ const PurchaseSchmea = new Schema<IPurchaseInfo>(
   },
   {
     versionKey: false,
+    collection: "purchaseinfo",
   }
 );
 
-export const PurchaseInfoModel = model<IPurchaseInfo>("purchaseinfo", PurchaseSchmea);
+export const PurchaseInfoModel = model<IPurchaseInfo>("purchaseinfo", PurchaseSchmea, "purchaseinfo");

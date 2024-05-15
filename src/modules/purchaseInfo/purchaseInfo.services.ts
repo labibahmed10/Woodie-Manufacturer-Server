@@ -6,6 +6,11 @@ const getAllPurchaseInfoFromDB = async () => {
   return result;
 };
 
+const getPurchaseInfoByIDFromDB = async (id: string) => {
+  const result = PurchaseInfoModel.findById(id);
+  return result;
+};
+
 const getPurchasedByEmailFromDB = async (email: string) => {
   const result = await PurchaseInfoModel.find({
     email,
@@ -15,6 +20,8 @@ const getPurchasedByEmailFromDB = async (email: string) => {
 };
 
 const updatePaymentStatusIntoDB = async (id: string, transictionID: string, paymentID: string, status: string) => {
+  const value = await PurchaseInfoModel.findOne({ _id: id });
+  console.log(value);
   const result = await PurchaseInfoModel.updateOne(
     { _id: id },
     {
@@ -27,9 +34,16 @@ const updatePaymentStatusIntoDB = async (id: string, transictionID: string, paym
   return result;
 };
 
+const addNewPurchaseInDB = async (data: any) => {
+  const result = await PurchaseInfoModel.create(data);
+  return result;
+};
+
 const PurchaseInfoServices = {
   getAllPurchaseInfoFromDB,
   getPurchasedByEmailFromDB,
   updatePaymentStatusIntoDB,
+  addNewPurchaseInDB,
+  getPurchaseInfoByIDFromDB,
 };
 export default PurchaseInfoServices;

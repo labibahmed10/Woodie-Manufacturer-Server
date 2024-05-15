@@ -1,6 +1,6 @@
 export interface IPurchaseInfo {
   name: string;
-  toolname: string;
+  toolName: string;
   email: string;
   address: string;
   phone: number;
