@@ -6,7 +6,6 @@ const ReviewsSchema = new Schema<IAllReviews>(
     name: {
       type: String,
       trim: true,
-      unique: true,
       required: [true, "Your name is required"],
     },
 
