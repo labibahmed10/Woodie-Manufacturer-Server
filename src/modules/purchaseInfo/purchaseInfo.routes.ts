@@ -4,9 +4,10 @@ const purchaseInfoRoutes = Router();
 
 purchaseInfoRoutes.get("/purchase-info", PurchaseInfoController.getAllPurchaseInfo);
 purchaseInfoRoutes.get("/purchased-by-email", PurchaseInfoController.getPurchasedByEmail);
-purchaseInfoRoutes.post("/purchase-info", PurchaseInfoController.addNewPurchaseInfo);
+purchaseInfoRoutes.post("/purchase-info", PurchaseInfoController.addNewPurchaseInfoOfUser);
 
 purchaseInfoRoutes.get("/purchase-info/:id", PurchaseInfoController.getPurchaseInfoByID);
-purchaseInfoRoutes.patch("/purchasePaid/:id", PurchaseInfoController.updatePaymentStatus);
+purchaseInfoRoutes.patch("/purchase-paid/:id", PurchaseInfoController.updatePaymentStatus);
+purchaseInfoRoutes.patch("/purchase-info/:id", PurchaseInfoController.updateProductStatus);
 
 export default purchaseInfoRoutes;

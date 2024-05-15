@@ -39,11 +39,25 @@ const addNewPurchaseInDB = async (data: any) => {
   return result;
 };
 
+// admin
+const updateProductStatusIntoDB = async (id: string, status: string) => {
+  const result = await PurchaseInfoModel.updateOne(
+    {
+      _id: id,
+    },
+    {
+      status: status,
+    }
+  );
+  return result;
+};
+
 const PurchaseInfoServices = {
   getAllPurchaseInfoFromDB,
   getPurchasedByEmailFromDB,
   updatePaymentStatusIntoDB,
   addNewPurchaseInDB,
   getPurchaseInfoByIDFromDB,
+  updateProductStatusIntoDB,
 };
 export default PurchaseInfoServices;

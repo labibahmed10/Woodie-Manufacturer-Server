@@ -12,8 +12,9 @@ const getAllPurchaseInfo = catchAsyncFunc(async (req, res) => {
 const getPurchaseInfoByID = catchAsyncFunc(async (req, res) => {
   const { id } = req.params;
   const result = await PurchaseInfoServices.getPurchaseInfoByIDFromDB(id);
+
   return res.status(200).json({
-    result
+    result,
   });
 });
 
@@ -27,10 +28,19 @@ const getPurchasedByEmail = catchAsyncFunc(async (req, res) => {
   });
 });
 
+const addNewPurchaseInfoOfUser = catchAsyncFunc(async (req, res) => {
+  const data = req.body;
+  const result = await PurchaseInfoServices.addNewPurchaseInDB(data);
+
+  return res.status(200).json({
+    result,
+  });
+});
+
 const updatePaymentStatus = catchAsyncFunc(async (req, res) => {
   const { id } = req.params;
   const { transictionID, paymentID, status } = req.body;
-  console.log(id);
+
   const result = await PurchaseInfoServices.updatePaymentStatusIntoDB(id, transictionID, paymentID, status);
 
   return res.status(200).json({
@@ -38,9 +48,11 @@ const updatePaymentStatus = catchAsyncFunc(async (req, res) => {
   });
 });
 
-const addNewPurchaseInfo = catchAsyncFunc(async (req, res) => {
-  const data = req.body;
-  const result = await PurchaseInfoServices.addNewPurchaseInDB(data);
+const updateProductStatus = catchAsyncFunc(async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const result = await PurchaseInfoServices.updateProductStatusIntoDB(id, status);
 
   return res.status(200).json({
     result,
@@ -51,8 +63,9 @@ const PurchaseInfoController = {
   getAllPurchaseInfo,
   getPurchasedByEmail,
   updatePaymentStatus,
-  addNewPurchaseInfo,
+  addNewPurchaseInfoOfUser,
   getPurchaseInfoByID,
+  updateProductStatus,
 };
 
 export default PurchaseInfoController;
