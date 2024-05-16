@@ -8,6 +8,7 @@ export interface IPurchaseInfo {
   quantity: number;
   avlQuan: number;
   totalCost: number;
+  prodID?: string;
   paid?: boolean;
   paymentID?: string;
   status?: "Shipped" | "Pending";

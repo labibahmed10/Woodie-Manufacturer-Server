@@ -1,3 +1,4 @@
+import { IPurchaseInfo } from "./purchaseInfo.interface";
 import { PurchaseInfoModel } from "./purchaseInfo.model";
 
 const getAllPurchaseInfoFromDB = async () => {
@@ -31,7 +32,7 @@ const updatePaymentStatusIntoDB = async (id: string, transictionID: string, paym
   return result;
 };
 
-const addNewPurchaseInDB = async (data: any) => {
+const addNewPurchaseInDB = async (data: IPurchaseInfo) => {
   const result = await PurchaseInfoModel.create(data);
   return result;
 };
@@ -50,8 +51,8 @@ const updateProductStatusIntoDB = async (id: string, status: string) => {
 };
 
 const cancelOrderFromPurchaseFromDB = async (id: string) => {
+  
   const result = await PurchaseInfoModel.deleteOne({ _id: id });
-
   return result;
 };
 

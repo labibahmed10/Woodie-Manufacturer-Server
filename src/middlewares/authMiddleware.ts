@@ -15,7 +15,7 @@ type UserRole = keyof typeof role;
 const authMiddleware = (role: UserRole) => {
   return catchAsyncFunc(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization?.split(" ")[1];
-
+    
     if (!token) {
       throw new AppError(httpStatus.UNAUTHORIZED, "You are not authorized to access this");
     }
@@ -28,14 +28,15 @@ const authMiddleware = (role: UserRole) => {
     const { email } = decoded;
 
     const user = await AllUsersModel.isUserExistByEmail(email);
+    
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, "This user does not exist");
     }
+    
 
     if (role && !(role === "admin")) {
       throw new AppError(httpStatus.FORBIDDEN, "You are not allowed");
     }
-
     req.user = email as JwtPayload;
     next();
   });

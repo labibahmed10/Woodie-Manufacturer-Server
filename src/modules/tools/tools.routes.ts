@@ -6,8 +6,8 @@ const toolsRoutes = Router();
 toolsRoutes.get("/all-tools", ToolsController.getAllTools);
 toolsRoutes.post("/create", authMiddleware(role.admin), ToolsController.createTool);
 
-toolsRoutes.get("/allTools/:id", ToolsController.getSingleTools);
-toolsRoutes.patch("/allTools/:id", authMiddleware, ToolsController.updateSingleTool);
-toolsRoutes.delete("/allTools/:id", authMiddleware(role.admin), ToolsController.deleteTool);
+toolsRoutes.get("/all-tools/:id", ToolsController.getSingleTools);
+toolsRoutes.patch("/all-tools/:id", ToolsController.updateSingleTool);
+toolsRoutes.delete("/all-tools/:id", authMiddleware(role.admin), ToolsController.deleteTool);
 
 export default toolsRoutes;

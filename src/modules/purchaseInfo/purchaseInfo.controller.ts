@@ -51,6 +51,7 @@ const updateProductStatus = catchAsyncFunc(async (req, res) => {
 
 const cancelAOrderFromPurchase = catchAsyncFunc(async (req, res) => {
   const { id } = req.params;
+  
   const result = await PurchaseInfoServices.cancelOrderFromPurchaseFromDB(id);
 
   sendResponse(res, httpStatus.OK, "Successfully cancel the order", result);

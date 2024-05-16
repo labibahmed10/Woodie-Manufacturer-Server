@@ -5,7 +5,6 @@ const PurchaseSchmea = new Schema<IPurchaseInfo>(
   {
     name: {
       type: String,
-      trim: true,
       required: [true, "Purchased person name is required"],
     },
     toolName: {
@@ -40,6 +39,9 @@ const PurchaseSchmea = new Schema<IPurchaseInfo>(
     totalCost: {
       type: Number,
       required: [true, "Total cost is required"],
+    },
+    prodID: {
+      type: String,
     },
     paid: {
       type: Boolean,

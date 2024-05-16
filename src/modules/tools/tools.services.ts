@@ -17,7 +17,11 @@ const getSingleToolsFromDB = async (id: string) => {
 };
 
 const updateSingleToolIntoDB = async (id: string, data: IAllTools) => {
-  const result = await ToolsModel.updateOne({ _id: id }, data, {
+  console.log("Updating ID", id);
+  console.log("Updated data", data);
+  console.log("Updated data", typeof data);
+  let dataToUpdate = typeof data === "number" || "string";
+  const result = await ToolsModel.updateOne({ _id: id }, dataToUpdate === true ? { avlQuan: data } : data, {
     runValidators: true,
   });
   return result;

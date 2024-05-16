@@ -9,6 +9,19 @@ const getAllUsersFromDB = async (): Promise<IAllUsers[]> => {
   return result;
 };
 
+const removeANewAdminInDB = async (email: string) => {
+  const result = await AllUsersModel.updateOne(
+    {
+      email: email,
+    },
+    {
+      $unset: { role: 1 },
+    }
+  );
+
+  return result;
+};
+
 const createANewAdminInDB = async (email: string) => {
   const result = await AllUsersModel.updateOne(
     {
@@ -46,10 +59,19 @@ const checkIfAdminFromDB = async (email: string, reqEmail: string) => {
   }
 };
 
+const removeAUserFromDB = async (email: string) => {
+  const result = await AllUsersModel.deleteOne({ email });
+  if (result.deletedCount > 0) {
+    return result;
+  } else throw new AppError(httpStatus.NOT_FOUND, "Couldn't delete user");
+};
+
 const AllUsersServices = {
   getAllUsersFromDB,
   createANewAdminInDB,
   updateUserInfoIntDB,
   checkIfAdminFromDB,
+  removeANewAdminInDB,
+  removeAUserFromDB,
 };
 export default AllUsersServices;

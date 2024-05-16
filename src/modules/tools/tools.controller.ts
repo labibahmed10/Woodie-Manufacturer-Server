@@ -22,6 +22,7 @@ const getSingleTools = catchAsyncFunc(async (req, res) => {
 const updateSingleTool = catchAsyncFunc(async (req, res) => {
   const { id } = req.params;
   const data = req.body;
+
   const result = await ToolServices.updateSingleToolIntoDB(id, data);
 
   sendResponse(res, httpStatus.OK, "Successfully updated tool", result);

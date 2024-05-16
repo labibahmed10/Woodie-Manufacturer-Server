@@ -23,15 +23,12 @@ const updateUserInfo = catchAsyncFunc(async (req, res) => {
   const { email } = req.query;
   const data = req.body;
 
-  const userInfo = await AllUsersServices.updateUserInfoIntDB(email as any, data);
+  await AllUsersServices.updateUserInfoIntDB(email as any, data);
   const token = jwt.sign({ email }, config.accessTokenSecret as string);
 
-  const result = {
-    result: userInfo,
+  sendResponse(res, httpStatus.OK, "Successfully updated user info", {
     accessToken: token,
-  };
-
-  sendResponse(res, httpStatus.OK, "Successfully updated user info", result);
+  });
 });
 
 const checkIfAdmin = catchAsyncFunc(async (req, res) => {
@@ -42,11 +39,27 @@ const checkIfAdmin = catchAsyncFunc(async (req, res) => {
   sendResponse(res, httpStatus.OK, "Successfully found", result);
 });
 
+const removeAAdmin = catchAsyncFunc(async (req, res) => {
+  const { email } = req.query;
+  const result = await AllUsersServices.removeANewAdminInDB(email as any);
+
+  sendResponse(res, httpStatus.OK, "Successfully Removed admin", result);
+});
+
+const removeAUser = catchAsyncFunc(async (req, res) => {
+  const { email } = req.query;
+  const result = await AllUsersServices.removeAUserFromDB(email as any);
+
+  sendResponse(res, httpStatus.OK, "Successfully Removed user", result);
+});
+
 const AllUsersController = {
   getAllRandomUsers,
   createANewAdmin,
   updateUserInfo,
   checkIfAdmin,
+  removeAAdmin,
+  removeAUser,
 };
 
 export default AllUsersController;

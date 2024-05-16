@@ -6,6 +6,8 @@ const allUsersRoutes = Router();
 allUsersRoutes.get("/all-users", authMiddleware(role.admin), AllUsersController.getAllRandomUsers);
 allUsersRoutes.get("/admin", authMiddleware(role.admin), AllUsersController.checkIfAdmin);
 allUsersRoutes.patch("/make-admin", authMiddleware(role.admin), AllUsersController.createANewAdmin);
-allUsersRoutes.put("/user-info", AllUsersController.updateUserInfo);
+allUsersRoutes.patch("/remove-admin", authMiddleware(role.admin), AllUsersController.removeAAdmin);
+allUsersRoutes.put("/user-info", authMiddleware(role.admin), AllUsersController.updateUserInfo);
+allUsersRoutes.delete("/remove-user", authMiddleware(role.admin), AllUsersController.removeAUser);
 
 export default allUsersRoutes;
