@@ -20,7 +20,6 @@ const updateSingleToolIntoDB = async (id: string, data: IAllTools) => {
   const result = await ToolsModel.updateOne({ _id: id }, data, {
     runValidators: true,
   });
-
   return result;
 };
 

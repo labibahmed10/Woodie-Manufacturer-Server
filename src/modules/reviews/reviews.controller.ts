@@ -1,19 +1,16 @@
+import httpStatus from "http-status";
 import catchAsyncFunc from "../../utils/catchAsyncFunc";
+import sendResponse from "../../utils/sendResponse";
 import ReviewServices from "./reviews.services";
 
 const getAllReviews = catchAsyncFunc(async (req, res) => {
   const result = await ReviewServices.getAllReviewsFromDB();
-
-  return res.status(200).json({
-    data: result,
-  });
+  sendResponse(res, httpStatus.OK, "Successfully retrived all reviews", result);
 });
 
 const createAReview = catchAsyncFunc(async (req, res) => {
   const result = await ReviewServices.createAReviewIntoDB(req.body);
-  return res.status(200).json({
-    result,
-  });
+  sendResponse(res, httpStatus.OK, "Created a review", result);
 });
 
 const ReviewsController = {

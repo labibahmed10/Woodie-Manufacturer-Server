@@ -29,7 +29,7 @@ const client = new MongoClient(uri, {
 
 const verifyJToken = (req, res, next) => {
   const accessToken = req.headers.authorization;
-  // console.log(accessToken);
+
   if (!accessToken) {
     return res.status(401).send({ status: false, message: "Unauthorized Access" });
   } else {

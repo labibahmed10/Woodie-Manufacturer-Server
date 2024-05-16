@@ -23,8 +23,6 @@ const createANewAdminInDB = async (email: string) => {
 };
 
 const updateUserInfoIntDB = async (email: string, data: Partial<IAllUsers>) => {
-  console.log(email);
-  console.log(data);
   const result = await AllUsersModel.updateOne(
     {
       email: email,
@@ -39,13 +37,9 @@ const updateUserInfoIntDB = async (email: string, data: Partial<IAllUsers>) => {
 };
 
 const checkIfAdminFromDB = async (email: string, reqEmail: string) => {
-  console.log("email admin", email);
-  console.log("req amdin", reqEmail);
   if (email === reqEmail) {
     const adminAccount = await AllUsersModel.findOne({ email });
-    console.log("adminAccount", adminAccount);
     const isAdmin = adminAccount!.role === role.admin;
-    console.log(isAdmin);
     return isAdmin;
   } else {
     throw new AppError(httpStatus.FORBIDDEN, "User is not a admin");

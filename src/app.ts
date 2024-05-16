@@ -2,6 +2,7 @@ import express, { Application, Request, Response, urlencoded } from "express";
 import cors from "cors";
 import notFoundRoutes from "./middlewares/notFoundRoutes";
 import allRoutes from "./routes/allRoutes";
+import globalErrorHandler from "./middlewares/globalErrorhandler";
 const app: Application = express();
 
 // parser
@@ -18,6 +19,9 @@ app.get("/", (req: Request, res: Response) => {
     message: "The server responded with a JSON response",
   });
 });
+
+// global error handler
+app.use(globalErrorHandler);
 
 // global route error handler
 app.all("*", notFoundRoutes);
