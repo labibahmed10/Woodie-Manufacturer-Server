@@ -4,6 +4,6 @@ import authMiddleware from "../../middlewares/authMiddleware";
 const reviewsRoutes = Router();
 
 reviewsRoutes.get("/all-reviews", ReviewsController.getAllReviews);
-reviewsRoutes.post("/create", authMiddleware, ReviewsController.createAReview);
+reviewsRoutes.post("/review-create", ReviewsController.createAReview);
 
 export default reviewsRoutes;
